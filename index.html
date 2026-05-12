@@ -2,402 +2,702 @@
 <html lang="cs">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototyp - Jednokrokova platba</title>
-  <style>
-    :root {
-      --bg: #f4f6fb;
-      --surface: #ffffff;
-      --ink: #15233b;
-      --muted: #62718c;
-      --line: #d9dfeb;
-      --brand: #0058d8;
-      --brand-strong: #0046ad;
-      --ok: #117a37;
-      --radius: 16px;
-      --shadow: 0 8px 24px rgba(21, 35, 59, 0.08);
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Prototyp – Platba</title>
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 55%);
-      color: var(--ink);
-      min-height: 100svh;
-    }
-
-    .app-shell {
-      max-width: 420px;
-      margin: 0 auto;
-      min-height: 100svh;
-      padding: 18px 14px 28px;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 14px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .back-btn,
-    .ghost-btn {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--surface);
-      color: var(--ink);
-      padding: 9px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .ghost-btn {
-      visibility: hidden;
-    }
-
-    .screen {
-      display: none;
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      animation: fade-slide 220ms ease;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    @keyframes fade-slide {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h1 {
-      margin: 4px 0 6px;
-      font-size: 22px;
-    }
-
-    p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.35;
-    }
-
-    .stack {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    label {
-      font-size: 13px;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 16px;
-      background: #fff;
-      color: var(--ink);
-    }
-
-    .two-cols {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .primary {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      background: var(--brand);
-      color: #fff;
-      font-weight: 600;
-      font-size: 16px;
-      padding: 13px 14px;
-      cursor: pointer;
-      margin-top: 16px;
-    }
-
-    .primary:hover,
-    .primary:focus-visible {
-      background: var(--brand-strong);
-    }
-
-    .summary {
-      margin-top: 16px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-      background: #f9fbff;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 14px;
-    }
-
-    .row strong {
-      color: var(--ink);
-    }
-
-    .ok {
-      margin-top: 10px;
-      color: var(--ok);
-      font-weight: 600;
-    }
-
-    .desktop-panel {
-      display: none;
-    }
-
-    @media (min-width: 900px) {
-      .app-shell {
-        max-width: 980px;
-        grid-template-columns: 420px 1fr;
-        grid-template-rows: auto;
-        align-items: start;
-        gap: 24px;
-      }
-
-      .desktop-panel {
-        display: block;
-        background: var(--surface);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        padding: 18px;
-      }
-
-      .desktop-panel h2 {
-        margin: 0 0 10px;
-        font-size: 19px;
-      }
-
-      .desktop-panel ul {
-        margin: 0;
-        padding-left: 18px;
-        color: var(--muted);
-      }
-    }
-  </style>
-
-  <!-- Microsoft Clarity placeholder -->
-  <!-- Replace CLARITY_ID with your project id when deploying -->
+  <!-- Microsoft Clarity – replace CLARITY_ID -->
   <script>
-    (function(c, l, a, r, i, t, y) {
-      c[a] = c[a] || function() { (c[a].q = c[a].q || []).push(arguments); };
-      t = l.createElement(r);
-      t.async = 1;
-      t.src = "https://www.clarity.ms/tag/" + i;
-      y = l.getElementsByTagName(r)[0];
-      y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", "CLARITY_ID");
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window,document,"clarity","script","CLARITY_ID");
   </script>
 
-  <!-- Google Analytics placeholder -->
-  <!-- Replace GA_MEASUREMENT_ID with your measurement id -->
+  <!-- Google Analytics – replace GA_MEASUREMENT_ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag("js", new Date());
-    gtag("config", "GA_MEASUREMENT_ID");
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js",new Date());
+    gtag("config","GA_MEASUREMENT_ID",{send_page_view:false});
   </script>
+
+  <style>
+    /* == Design tokeny == */
+    :root {
+      --navy:       #1b2d4f;
+      --navy-light: #243b69;
+      --blue:       #0058cc;
+      --blue-dark:  #0046a8;
+      --blue-pale:  #e8f0fc;
+      --green:      #00875a;
+      --green-pale: #e3f5ee;
+      --red:        #c0392b;
+      --ink:        #1b2d4f;
+      --ink-2:      #4a5568;
+      --ink-3:      #718096;
+      --line:       #dce3ef;
+      --bg:         #f2f5fb;
+      --surface:    #ffffff;
+      --r-sm:       10px;
+      --r:          16px;
+      --r-lg:       24px;
+      --shadow:     0 4px 20px rgba(27,45,79,.10);
+      --shadow-sm:  0 2px 8px rgba(27,45,79,.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100svh;
+      overflow-x: hidden;
+    }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, select { font-family: inherit; }
+
+    /* == Obálka == */
+    #app {
+      max-width: 420px;
+      min-height: 100svh;
+      margin: 0 auto;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* == Stránky == */
+    .screen {
+      display: none;
+      flex-direction: column;
+      min-height: 100svh;
+      animation: fadeUp .22s ease both;
+    }
+    .screen.active { display: flex; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* == TopBar == */
+    .topbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 16px 10px;
+      background: var(--navy); color: #fff;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar.light {
+      background: var(--surface); color: var(--ink);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar__back {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: grid; place-items: center;
+      flex-shrink: 0; color: inherit; opacity: .8;
+    }
+    .topbar__back:hover { opacity: 1; }
+    .topbar__title { flex: 1; font-size: 17px; font-weight: 600; text-align: center; }
+    .topbar__action { width: 36px; height: 36px; flex-shrink: 0; }
+
+    /* == Hero == */
+    .hero {
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #fff;
+      padding: 20px 20px 32px;
+    }
+    .hero__account { font-size: 13px; opacity: .65; margin-bottom: 4px; }
+    .hero__balance  { font-size: 34px; font-weight: 700; letter-spacing: -.5px; }
+    .hero__currency { font-size: 18px; font-weight: 400; opacity: .7; margin-left: 4px; }
+    .hero__available { font-size: 13px; opacity: .6; margin-top: 4px; }
+
+    /* == Rychle akce == */
+    .quick-actions {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 12px; padding: 0 16px; margin-top: -24px;
+    }
+    .qa-card {
+      background: var(--surface); border-radius: var(--r);
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; padding: 14px 8px 12px;
+      transition: transform .15s;
+    }
+    .qa-card:hover { transform: translateY(-2px); }
+    .qa-card__icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: grid; place-items: center; font-size: 20px;
+    }
+    .qa-card__icon.blue  { background: var(--blue-pale); color: var(--blue); }
+    .qa-card__icon.green { background: var(--green-pale); color: var(--green); }
+    .qa-card__icon.navy  { background: #e5eaf4; color: var(--navy); }
+    .qa-card__label { font-size: 11px; font-weight: 600; color: var(--ink-2); text-align: center; }
+
+    /* == Sekce == */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 8px;
+    }
+    .section-header__title { font-size: 15px; font-weight: 700; }
+    .section-header__link  { font-size: 13px; color: var(--blue); font-weight: 500; }
+
+    /* == Transakce == */
+    .tx-list { padding: 0 16px; }
+    .tx-item {
+      background: var(--surface);
+      display: flex; align-items: center; gap: 12px; padding: 13px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .tx-item:first-child { border-radius: var(--r-sm) var(--r-sm) 0 0; }
+    .tx-item:last-child  { border-radius: 0 0 var(--r-sm) var(--r-sm); border-bottom: none; }
+    .tx-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+      background: var(--blue-pale); color: var(--blue);
+    }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-info__name  { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-info__date  { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+    .tx-amount { font-size: 15px; font-weight: 700; }
+    .tx-amount.pos { color: var(--green); }
+
+    /* == Bottom nav == */
+    .bottom-nav {
+      margin-top: auto;
+      background: var(--surface); border-top: 1px solid var(--line);
+      display: grid; grid-template-columns: repeat(4,1fr);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .bn-item {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px; padding: 10px 4px 12px; font-size: 10px;
+      color: var(--ink-3); font-weight: 500;
+    }
+    .bn-item.active { color: var(--blue); }
+    .bn-item svg { width: 22px; height: 22px; }
+
+    /* == Formulare == */
+    .form-body {
+      padding: 20px 16px; flex: 1;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .field { display: grid; gap: 6px; }
+    .field label { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+    .field input, .field select {
+      border: 1.5px solid var(--line); border-radius: var(--r-sm);
+      padding: 13px 14px; font-size: 16px; color: var(--ink);
+      background: var(--surface); width: 100%;
+      transition: border-color .15s; -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--blue); }
+    .field input::placeholder { color: var(--ink-3); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* == Krokovac == */
+    .stepper { display: flex; align-items: center; gap: 6px; padding: 12px 16px 4px; }
+    .step { flex: 1; height: 4px; border-radius: 99px; background: var(--line); }
+    .step.done { background: var(--blue); }
+
+    /* == Souhrn == */
+    .summary-card {
+      background: var(--surface); border-radius: var(--r);
+      box-shadow: var(--shadow-sm); padding: 4px 0; margin: 0 16px;
+    }
+    .srow {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; padding: 13px 16px;
+      border-bottom: 1px solid var(--line); font-size: 14px;
+    }
+    .srow:last-child { border-bottom: none; }
+    .srow__label { color: var(--ink-3); }
+    .srow__val   { font-weight: 600; color: var(--ink); text-align: right; }
+
+    /* == Autorizace == */
+    .auth-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 24px; gap: 20px;
+    }
+    .auth-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--blue-pale); color: var(--blue);
+      display: grid; place-items: center; font-size: 36px;
+    }
+    .auth-title { font-size: 20px; font-weight: 700; text-align: center; }
+    .auth-sub   { font-size: 14px; color: var(--ink-3); text-align: center; line-height: 1.4; }
+    .pin-row    { display: flex; gap: 14px; }
+    .pin-dot    { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); }
+    .pin-dot.filled { background: var(--blue); border-color: var(--blue); }
+    .pin-key {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--surface); border: 1.5px solid var(--line);
+      font-size: 22px; font-weight: 500; color: var(--ink);
+      transition: background .12s;
+    }
+    .pin-key:hover { background: var(--blue-pale); }
+    .pin-grid { display: grid; grid-template-columns: repeat(3,72px); gap: 12px; justify-content: center; }
+
+    /* == Vysledek == */
+    .result-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 24px; gap: 16px;
+    }
+    .result-icon { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; font-size: 40px; }
+    .result-icon.ok  { background: var(--green-pale); color: var(--green); }
+    .result-title    { font-size: 22px; font-weight: 700; text-align: center; }
+    .result-amount   { font-size: 32px; font-weight: 700; color: var(--ink); }
+    .result-sub      { font-size: 14px; color: var(--ink-3); text-align: center; line-height: 1.45; max-width: 280px; }
+
+    /* == CTA == */
+    .btn-primary {
+      display: block; width: 100%;
+      background: var(--blue); color: #fff;
+      font-size: 16px; font-weight: 600;
+      padding: 15px 20px; border-radius: var(--r-sm); text-align: center;
+      transition: background .15s; cursor: pointer; border: none;
+    }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-secondary {
+      display: block; width: 100%;
+      background: transparent; color: var(--blue);
+      font-size: 15px; font-weight: 600;
+      padding: 13px 20px; border-radius: var(--r-sm); text-align: center;
+      border: 1.5px solid var(--blue); cursor: pointer;
+    }
+    .btn-ghost {
+      display: block; width: 100%;
+      background: transparent; color: var(--ink-2);
+      font-size: 15px; font-weight: 500;
+      padding: 13px 20px; text-align: center; cursor: pointer; border: none;
+    }
+    .cta-area {
+      padding: 12px 16px calc(16px + env(safe-area-inset-bottom,0));
+      display: grid; gap: 10px;
+    }
+
+    /* == Desktop panel == */
+    @media (min-width: 860px) {
+      body { display: flex; align-items: flex-start; justify-content: center; padding: 40px 24px; gap: 32px; }
+      #app {
+        border-radius: 36px; overflow: hidden;
+        box-shadow: 0 24px 60px rgba(27,45,79,.22);
+        height: 790px; min-height: unset; overflow-y: auto; flex-shrink: 0;
+      }
+      #desktop-panel { display: block; width: 280px; position: sticky; top: 40px; }
+    }
+    #desktop-panel {
+      display: none; background: var(--surface); border-radius: var(--r);
+      padding: 20px; box-shadow: var(--shadow-sm);
+    }
+    #desktop-panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--navy); }
+    #desktop-panel p  { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+    .nav-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .nav-pill  {
+      font-size: 12px; padding: 5px 10px; border-radius: 99px;
+      background: var(--blue-pale); color: var(--blue); font-weight: 600; cursor: pointer; border: none;
+    }
+    .nav-pill:hover { background: #d0e4fc; }
+  </style>
 </head>
 <body>
-  <main class="app-shell">
-    <section>
-      <header class="topbar">
-        <button type="button" class="back-btn" id="backBtn" aria-label="Zpet">Zpet</button>
-        <button type="button" class="ghost-btn" aria-hidden="true">Skryt</button>
-      </header>
 
-      <section class="screen active" id="screen-form" data-page-id="payment-form-step1">
-        <h1>Nova platba</h1>
-        <p>Jednokrokovy platebni formular pro mobilni testovani.</p>
+<!-- ===== MOBILNI PROTOTYP ===== -->
+<div id="app">
 
-        <form id="paymentForm" class="stack" novalidate>
-          <div>
-            <label for="iban">Cislo uctu / IBAN</label>
-            <input id="iban" name="iban" autocomplete="off" placeholder="CZ65 0800 0000 1920 0014 5399" required>
-          </div>
+  <!-- 1. HOME SCREEN -->
+  <div class="screen" id="s-home" data-page-id="home-screen" data-page-title="Domu">
+    <div class="topbar">
+      <div style="width:36px"></div>
+      <div class="topbar__title" style="text-align:left;font-size:15px;opacity:.75">Dobry den, Ondrej</div>
+      <button class="topbar__action" style="border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;color:#fff" aria-label="Oznameni">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
 
-          <div>
-            <label for="recipient">Prijemce</label>
-            <input id="recipient" name="recipient" autocomplete="name" placeholder="Jmeno prijemce" required>
-          </div>
+    <div class="hero">
+      <div class="hero__account">Bezny ucet · CZK</div>
+      <div class="hero__balance">128&nbsp;450,<span style="font-size:22px">40</span><span class="hero__currency">Kc</span></div>
+      <div class="hero__available">Disponibilni zustatek</div>
+    </div>
 
-          <div class="two-cols">
-            <div>
-              <label for="amount">Castka</label>
-              <input id="amount" name="amount" inputmode="decimal" placeholder="1500" required>
-            </div>
-            <div>
-              <label for="currency">Mena</label>
-              <select id="currency" name="currency">
-                <option value="CZK">CZK</option>
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label for="message">Zprava pro prijemce</label>
-            <input id="message" name="message" placeholder="Volitelne">
-          </div>
-
-          <button class="primary" type="submit" id="submitPayment">Odeslat platbu</button>
-        </form>
-      </section>
-
-      <section class="screen" id="screen-success" data-page-id="payment-success">
-        <h1>Platba odeslana</h1>
-        <p>Platba byla uspesne zpracovana.</p>
-
-        <div class="summary" aria-live="polite">
-          <div class="row"><span>Prijemce</span><strong id="sumRecipient">-</strong></div>
-          <div class="row"><span>Cislo uctu</span><strong id="sumIban">-</strong></div>
-          <div class="row"><span>Castka</span><strong id="sumAmount">-</strong></div>
+    <div class="quick-actions">
+      <button class="qa-card" data-goto="s-p1" aria-label="Nova platba">
+        <div class="qa-card__icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
+        <span class="qa-card__label">Platba</span>
+      </button>
+      <button class="qa-card" aria-label="QR Platba">
+        <div class="qa-card__icon navy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><line x1="14" y1="14" x2="20" y2="14"/><line x1="14" y1="17" x2="17" y2="17"/><line x1="17" y1="20" x2="20" y2="20"/><line x1="14" y1="20" x2="14" y2="20"/></svg>
+        </div>
+        <span class="qa-card__label">QR Platba</span>
+      </button>
+      <button class="qa-card" aria-label="Dobiti">
+        <div class="qa-card__icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <span class="qa-card__label">Dobiti</span>
+      </button>
+      <button class="qa-card" aria-label="Vice">
+        <div class="qa-card__icon navy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <span class="qa-card__label">Vice</span>
+      </button>
+    </div>
 
-        <p class="ok">Stiskni systemove zpet pro navrat do formulare.</p>
-        <button class="primary" type="button" id="newPaymentBtn">Nova platba</button>
-      </section>
-    </section>
+    <div class="section-header">
+      <span class="section-header__title">Posledni pohyby</span>
+      <span class="section-header__link">Vse</span>
+    </div>
 
-    <aside class="desktop-panel" data-page-id="desktop-helper-panel">
-      <h2>Desktop ovladaci panel</h2>
-      <ul>
-        <li>Mobilni prototyp zustava cisty a bez rusivych prvku.</li>
-        <li>Tento panel se zobrazuje jen na sirsich displejich.</li>
-        <li>Lze sem dopsat poznamky pro testovani scenaru.</li>
-      </ul>
-    </aside>
-  </main>
+    <div class="tx-list">
+      <div class="tx-item">
+        <div class="tx-avatar">🛒</div>
+        <div class="tx-info"><div class="tx-info__name">Albert Supermarket</div><div class="tx-info__date">Dnes, 09:14</div></div>
+        <div class="tx-amount">-542 Kc</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-avatar">🏠</div>
+        <div class="tx-info"><div class="tx-info__name">Najem – Martin Novak</div><div class="tx-info__date">Vcera, 18:00</div></div>
+        <div class="tx-amount">-12 000 Kc</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-avatar" style="background:var(--green-pale);color:var(--green)">💼</div>
+        <div class="tx-info"><div class="tx-info__name">Vyplata – KB a.s.</div><div class="tx-info__date">8. 5. 2026</div></div>
+        <div class="tx-amount pos">+52 000 Kc</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-avatar">⚡</div>
+        <div class="tx-info"><div class="tx-info__name">CEZ Distribuce</div><div class="tx-info__date">7. 5. 2026</div></div>
+        <div class="tx-amount">-2 340 Kc</div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
 
-  <script>
-    var screens = {
-      form: document.getElementById("screen-form"),
-      success: document.getElementById("screen-success")
-    };
+    <nav class="bottom-nav">
+      <button class="bn-item active" aria-label="Domu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Domu
+      </button>
+      <button class="bn-item" aria-label="Platby">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Platby
+      </button>
+      <button class="bn-item" aria-label="Karty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Karty
+      </button>
+      <button class="bn-item" aria-label="Profil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil
+      </button>
+    </nav>
+  </div>
 
-    function trackPage(pageKey) {
-      var pageId = screens[pageKey].getAttribute("data-page-id");
-      document.body.setAttribute("data-current-page", pageId);
+  <!-- 2. NOVA PLATBA – KROK 1 -->
+  <div class="screen" id="s-p1" data-page-id="nova-platba-krok-1" data-page-title="Nova platba – Prijemce">
+    <div class="topbar light">
+      <button class="topbar__back" data-back aria-label="Zpet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="topbar__title">Nova platba</div>
+      <div class="topbar__action"></div>
+    </div>
+    <div class="stepper" aria-label="Krok 1 ze 2">
+      <div class="step done"></div>
+      <div class="step"></div>
+    </div>
+    <div class="form-body">
+      <p style="font-size:14px;color:var(--ink-2)">Zadejte prijemce a cislo uctu.</p>
+      <div class="field">
+        <label for="p1-iban">Cislo uctu / IBAN</label>
+        <input id="p1-iban" inputmode="text" autocomplete="off" placeholder="123456789/0100 nebo CZ65…" required>
+      </div>
+      <div class="field">
+        <label for="p1-recipient">Prijemce</label>
+        <input id="p1-recipient" autocomplete="name" placeholder="Jmeno nebo nazev firmy" required>
+      </div>
+      <div class="field">
+        <label for="p1-vs">Variabilni symbol</label>
+        <input id="p1-vs" inputmode="numeric" placeholder="Volitelne">
+      </div>
+      <div class="field">
+        <label for="p1-ss">Specificky symbol</label>
+        <input id="p1-ss" inputmode="numeric" placeholder="Volitelne">
+      </div>
+    </div>
+    <div class="cta-area">
+      <button class="btn-primary" id="p1-next">Pokracovat</button>
+    </div>
+  </div>
 
-      if (typeof window.clarity === "function") {
-        window.clarity("set", "virtual_page", pageId);
+  <!-- 3. NOVA PLATBA – KROK 2 -->
+  <div class="screen" id="s-p2" data-page-id="nova-platba-krok-2" data-page-title="Nova platba – Castka">
+    <div class="topbar light">
+      <button class="topbar__back" data-back aria-label="Zpet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="topbar__title">Nova platba</div>
+      <div class="topbar__action"></div>
+    </div>
+    <div class="stepper" aria-label="Krok 2 ze 2">
+      <div class="step done"></div>
+      <div class="step done"></div>
+    </div>
+    <div class="form-body">
+      <p style="font-size:14px;color:var(--ink-2)">Zadejte castku a dalsi informace.</p>
+      <div class="two-col">
+        <div class="field">
+          <label for="p2-amount">Castka</label>
+          <input id="p2-amount" inputmode="decimal" placeholder="0,00" required>
+        </div>
+        <div class="field">
+          <label for="p2-currency">Mena</label>
+          <select id="p2-currency">
+            <option value="CZK">CZK</option>
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="p2-date">Datum splatnosti</label>
+        <input id="p2-date" type="date" required>
+      </div>
+      <div class="field">
+        <label for="p2-msg">Zprava pro prijemce</label>
+        <input id="p2-msg" placeholder="Volitelne">
+      </div>
+    </div>
+    <div class="cta-area">
+      <button class="btn-primary" id="p2-next">Zobrazit souhrn</button>
+    </div>
+  </div>
+
+  <!-- 4. SOUHRN PLATBY -->
+  <div class="screen" id="s-summary" data-page-id="souhrn-platby" data-page-title="Souhrn platby">
+    <div class="topbar light">
+      <button class="topbar__back" data-back aria-label="Zpet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="topbar__title">Souhrn platby</div>
+      <div class="topbar__action"></div>
+    </div>
+    <div style="padding:20px 16px 12px">
+      <p style="font-size:14px;color:var(--ink-2)">Zkontrolujte udaje pred odeslanim.</p>
+    </div>
+    <div class="summary-card">
+      <div class="srow"><span class="srow__label">Prijemce</span><span class="srow__val" id="sum-recipient">—</span></div>
+      <div class="srow"><span class="srow__label">Cislo uctu</span><span class="srow__val" id="sum-iban">—</span></div>
+      <div class="srow"><span class="srow__label">Var. symbol</span><span class="srow__val" id="sum-vs">—</span></div>
+      <div class="srow"><span class="srow__label">Castka</span><span class="srow__val" id="sum-amount" style="font-size:18px;color:var(--blue)">—</span></div>
+      <div class="srow"><span class="srow__label">Datum splatnosti</span><span class="srow__val" id="sum-date">—</span></div>
+      <div class="srow"><span class="srow__label">Zprava</span><span class="srow__val" id="sum-msg">—</span></div>
+    </div>
+    <div class="cta-area" style="margin-top:auto">
+      <button class="btn-primary" id="summary-confirm">Potvrdit a autorizovat</button>
+      <button class="btn-ghost" data-back>Zpet k uprave</button>
+    </div>
+  </div>
+
+  <!-- 5. AUTORIZACE -->
+  <div class="screen" id="s-auth" data-page-id="autorizace-platby" data-page-title="Autorizace platby">
+    <div class="topbar light">
+      <button class="topbar__back" data-back aria-label="Zpet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="topbar__title">Autorizace</div>
+      <div class="topbar__action"></div>
+    </div>
+    <div class="auth-wrap">
+      <div class="auth-icon">🔐</div>
+      <h2 class="auth-title">Potvrd'te platbu</h2>
+      <p class="auth-sub">Zadejte PIN nebo pouzijte biometricke overeni.</p>
+      <div class="pin-row" id="pin-dots">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+      <div class="pin-grid">
+        <button class="pin-key">1</button>
+        <button class="pin-key">2</button>
+        <button class="pin-key">3</button>
+        <button class="pin-key">4</button>
+        <button class="pin-key">5</button>
+        <button class="pin-key">6</button>
+        <button class="pin-key">7</button>
+        <button class="pin-key">8</button>
+        <button class="pin-key">9</button>
+        <div></div>
+        <button class="pin-key">0</button>
+        <button class="pin-key pin-del">&#x232B;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. VYSLEDEK -->
+  <div class="screen" id="s-result" data-page-id="vysledek-platby" data-page-title="Platba odeslana">
+    <div class="topbar light">
+      <div style="width:36px"></div>
+      <div class="topbar__title">Vysledek</div>
+      <div class="topbar__action"></div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-icon ok">&#10003;</div>
+      <h2 class="result-title">Platba odeslana</h2>
+      <div class="result-amount" id="result-amount">—</div>
+      <p class="result-sub">Platba byla uspesne odeslana na ucet<br><strong id="result-recipient">—</strong></p>
+      <div class="summary-card" style="width:100%;margin:0">
+        <div class="srow"><span class="srow__label">Cislo uctu</span><span class="srow__val" id="result-iban">—</span></div>
+        <div class="srow"><span class="srow__label">Datum splatnosti</span><span class="srow__val" id="result-date">—</span></div>
+        <div class="srow"><span class="srow__label">Referencni c.</span><span class="srow__val" id="result-ref">—</span></div>
+      </div>
+    </div>
+    <div class="cta-area">
+      <button class="btn-primary" id="result-home">Zpet na hlavni stranku</button>
+      <button class="btn-secondary" id="result-new">Nova platba</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ===== DESKTOP PANEL ===== -->
+<aside id="desktop-panel">
+  <h3>Navigace obrazovek</h3>
+  <p>Ovladaci panel pro testovani na desktopu. Mobilni verze zustava cista.</p>
+  <div class="nav-pills">
+    <button class="nav-pill" data-jump="s-home">1. Home</button>
+    <button class="nav-pill" data-jump="s-p1">2. Prijemce</button>
+    <button class="nav-pill" data-jump="s-p2">3. Castka</button>
+    <button class="nav-pill" data-jump="s-summary">4. Souhrn</button>
+    <button class="nav-pill" data-jump="s-auth">5. Autorizace</button>
+    <button class="nav-pill" data-jump="s-result">6. Vysledek</button>
+  </div>
+  <p style="margin-top:14px;font-size:12px;color:var(--ink-3)">Aktualni: <strong id="current-screen-name" style="color:var(--blue)">—</strong></p>
+</aside>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  var SCREENS = ['s-home','s-p1','s-p2','s-summary','s-auth','s-result'];
+  var pd = {};
+
+  function trackPage(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var pageId = el.getAttribute('data-page-id') || id;
+    var title  = el.getAttribute('data-page-title') || id;
+    if (typeof window.clarity === 'function') window.clarity('set','virtual_page',pageId);
+    if (typeof window.gtag === 'function') window.gtag('event','page_view',{page_title:title,page_path:'/prototype/'+pageId});
+    var lbl = document.getElementById('current-screen-name');
+    if (lbl) lbl.textContent = title;
+  }
+
+  function showScreen(id, push) {
+    SCREENS.forEach(function(s){ document.getElementById(s).classList.toggle('active', s===id); });
+    if (push) history.pushState({screen:id},'','#'+id);
+    window.scrollTo(0,0);
+    trackPage(id);
+  }
+
+  function setText(id,val){ var e=document.getElementById(id); if(e) e.textContent=val||'—'; }
+
+  function fillSummary() {
+    setText('sum-recipient', pd.recipient);
+    setText('sum-iban', pd.iban);
+    setText('sum-vs', pd.vs || '—');
+    setText('sum-amount', pd.amount ? pd.amount+' '+pd.currency : '—');
+    setText('sum-date', pd.date);
+    setText('sum-msg', pd.message || '—');
+  }
+
+  function fillResult() {
+    setText('result-amount', pd.amount ? pd.amount+' '+pd.currency : '—');
+    setText('result-recipient', pd.recipient);
+    setText('result-iban', pd.iban);
+    setText('result-date', pd.date);
+    setText('result-ref', 'REF-'+Date.now().toString(36).toUpperCase());
+  }
+
+  // PIN
+  var pinCount = 0;
+  document.querySelectorAll('.pin-key').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if (btn.classList.contains('pin-del')) { if(pinCount>0) pinCount--; }
+      else { if(pinCount<6) pinCount++; }
+      document.querySelectorAll('#pin-dots .pin-dot').forEach(function(d,i){ d.classList.toggle('filled',i<pinCount); });
+      if (pinCount===6) {
+        setTimeout(function(){
+          fillResult();
+          showScreen('s-result',true);
+          pinCount=0;
+          document.querySelectorAll('#pin-dots .pin-dot').forEach(function(d){ d.classList.remove('filled'); });
+          if (typeof window.gtag==='function') window.gtag('event','payment_authorized',{event_category:'prototype'});
+        },350);
       }
-
-      if (typeof window.gtag === "function") {
-        window.gtag("event", "page_view", {
-          page_title: pageId,
-          page_path: "/prototype/" + pageId
-        });
-      }
-    }
-
-    function renderPage(pageKey) {
-      Object.keys(screens).forEach(function(key) {
-        screens[key].classList.toggle("active", key === pageKey);
-      });
-      trackPage(pageKey);
-    }
-
-    function goTo(pageKey, pushToHistory) {
-      renderPage(pageKey);
-      if (pushToHistory) {
-        history.pushState({ page: pageKey }, "", "#" + pageKey);
-      }
-    }
-
-    function fillSummary(formData) {
-      document.getElementById("sumRecipient").textContent = formData.recipient || "-";
-      document.getElementById("sumIban").textContent = formData.iban || "-";
-      document.getElementById("sumAmount").textContent = (formData.amount || "0") + " " + (formData.currency || "CZK");
-    }
-
-    document.getElementById("paymentForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      var formData = {
-        iban: document.getElementById("iban").value.trim(),
-        recipient: document.getElementById("recipient").value.trim(),
-        amount: document.getElementById("amount").value.trim(),
-        currency: document.getElementById("currency").value,
-        message: document.getElementById("message").value.trim()
-      };
-
-      if (!formData.iban || !formData.recipient || !formData.amount) {
-        alert("Vypln povinna pole.");
-        return;
-      }
-
-      fillSummary(formData);
-
-      if (typeof window.gtag === "function") {
-        window.gtag("event", "payment_submit", {
-          event_category: "prototype",
-          value: Number(formData.amount.replace(",", ".")) || 0,
-          currency: formData.currency
-        });
-      }
-
-      goTo("success", true);
     });
+  });
 
-    document.getElementById("newPaymentBtn").addEventListener("click", function() {
-      goTo("form", true);
-    });
+  // Navigace
+  document.getElementById('p1-next').addEventListener('click', function(){
+    var iban=document.getElementById('p1-iban').value.trim();
+    var recp=document.getElementById('p1-recipient').value.trim();
+    if(!iban||!recp){ alert('Vyplnte cislo uctu a jmeno prijemce.'); return; }
+    pd.iban=iban; pd.recipient=recp;
+    pd.vs=document.getElementById('p1-vs').value.trim();
+    pd.ss=document.getElementById('p1-ss').value.trim();
+    showScreen('s-p2',true);
+  });
 
-    document.getElementById("backBtn").addEventListener("click", function() {
-      if (history.length > 1) {
-        history.back();
-      } else {
-        goTo("form", false);
-      }
-    });
+  document.getElementById('p2-next').addEventListener('click', function(){
+    var amt=document.getElementById('p2-amount').value.trim();
+    var dt=document.getElementById('p2-date').value;
+    if(!amt||!dt){ alert('Vyplnte castku a datum splatnosti.'); return; }
+    pd.amount=amt.replace(',','.');
+    pd.currency=document.getElementById('p2-currency').value;
+    pd.date=dt; pd.message=document.getElementById('p2-msg').value.trim();
+    fillSummary();
+    if(typeof window.gtag==='function') window.gtag('event','payment_form_filled',{event_category:'prototype',value:parseFloat(pd.amount)||0,currency:pd.currency});
+    showScreen('s-summary',true);
+  });
 
-    window.addEventListener("popstate", function(event) {
-      var target = (event.state && event.state.page) || (location.hash || "#form").replace("#", "");
-      if (target !== "success") {
-        target = "form";
-      }
-      renderPage(target);
-    });
+  document.getElementById('summary-confirm').addEventListener('click', function(){ showScreen('s-auth',true); });
 
-    var initialPage = (location.hash || "#form").replace("#", "");
-    if (initialPage !== "success") {
-      initialPage = "form";
-    }
+  document.getElementById('result-home').addEventListener('click', function(){
+    pd={}; showScreen('s-home',true);
+  });
 
-    history.replaceState({ page: initialPage }, "", "#" + initialPage);
-    renderPage(initialPage);
-  </script>
+  document.getElementById('result-new').addEventListener('click', function(){
+    pd={};
+    document.querySelectorAll('input').forEach(function(i){ i.value=''; });
+    document.getElementById('p2-date').value=new Date().toISOString().split('T')[0];
+    showScreen('s-p1',true);
+  });
+
+  document.querySelectorAll('[data-back]').forEach(function(b){ b.addEventListener('click', function(){ history.back(); }); });
+  document.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click', function(){ showScreen(b.getAttribute('data-goto'),true); }); });
+  document.querySelectorAll('[data-jump]').forEach(function(b){ b.addEventListener('click', function(){ showScreen(b.getAttribute('data-jump'),true); }); });
+
+  window.addEventListener('popstate', function(e){
+    var t=(e.state&&e.state.screen)||'s-home';
+    if(!document.getElementById(t)) t='s-home';
+    SCREENS.forEach(function(s){ document.getElementById(s).classList.toggle('active',s===t); });
+    trackPage(t);
+  });
+
+  // Init
+  var init=(location.hash||'#s-home').replace('#','');
+  if(!document.getElementById(init)) init='s-home';
+  history.replaceState({screen:init},'','#'+init);
+  showScreen(init,false);
+  document.getElementById('p2-date').value=new Date().toISOString().split('T')[0];
+</script>
 </body>
 </html>
