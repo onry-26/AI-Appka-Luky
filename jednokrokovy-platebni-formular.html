@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototyp - Jednokrokova platba</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --ink: #15233b;
+      --muted: #62718c;
+      --line: #d9dfeb;
+      --brand: #0058d8;
+      --brand-strong: #0046ad;
+      --ok: #117a37;
+      --radius: 16px;
+      --shadow: 0 8px 24px rgba(21, 35, 59, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 55%);
+      color: var(--ink);
+      min-height: 100svh;
+    }
+
+    .app-shell {
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100svh;
+      padding: 18px 14px 28px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back-btn,
+    .ghost-btn {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 9px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .ghost-btn {
+      visibility: hidden;
+    }
+
+    .screen {
+      display: none;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      animation: fade-slide 220ms ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fade-slide {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      margin: 4px 0 6px;
+      font-size: 22px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 13px 14px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    .primary:hover,
+    .primary:focus-visible {
+      background: var(--brand-strong);
+    }
+
+    .summary {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: #f9fbff;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .row strong {
+      color: var(--ink);
+    }
+
+    .ok {
+      margin-top: 10px;
+      color: var(--ok);
+      font-weight: 600;
+    }
+
+    .desktop-panel {
+      display: none;
+    }
+
+    @media (min-width: 900px) {
+      .app-shell {
+        max-width: 980px;
+        grid-template-columns: 420px 1fr;
+        grid-template-rows: auto;
+        align-items: start;
+        gap: 24px;
+      }
+
+      .desktop-panel {
+        display: block;
+        background: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .desktop-panel h2 {
+        margin: 0 0 10px;
+        font-size: 19px;
+      }
+
+      .desktop-panel ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+      }
+    }
+  </style>
+
+  <!-- Microsoft Clarity placeholder -->
+  <!-- Replace CLARITY_ID with your project id when deploying -->
+  <script>
+    (function(c, l, a, r, i, t, y) {
+      c[a] = c[a] || function() { (c[a].q = c[a].q || []).push(arguments); };
+      t = l.createElement(r);
+      t.async = 1;
+      t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0];
+      y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "CLARITY_ID");
+  </script>
+
+  <!-- Google Analytics placeholder -->
+  <!-- Replace GA_MEASUREMENT_ID with your measurement id -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "GA_MEASUREMENT_ID");
+  </script>
+</head>
+<body>
+  <main class="app-shell">
+    <section>
+      <header class="topbar">
+        <button type="button" class="back-btn" id="backBtn" aria-label="Zpet">Zpet</button>
+        <button type="button" class="ghost-btn" aria-hidden="true">Skryt</button>
+      </header>
+
+      <section class="screen active" id="screen-form" data-page-id="payment-form-step1">
+        <h1>Nova platba</h1>
+        <p>Jednokrokovy platebni formular pro mobilni testovani.</p>
+
+        <form id="paymentForm" class="stack" novalidate>
+          <div>
+            <label for="iban">Cislo uctu / IBAN</label>
+            <input id="iban" name="iban" autocomplete="off" placeholder="CZ65 0800 0000 1920 0014 5399" required>
+          </div>
+
+          <div>
+            <label for="recipient">Prijemce</label>
+            <input id="recipient" name="recipient" autocomplete="name" placeholder="Jmeno prijemce" required>
+          </div>
+
+          <div class="two-cols">
+            <div>
+              <label for="amount">Castka</label>
+              <input id="amount" name="amount" inputmode="decimal" placeholder="1500" required>
+            </div>
+            <div>
+              <label for="currency">Mena</label>
+              <select id="currency" name="currency">
+                <option value="CZK">CZK</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="message">Zprava pro prijemce</label>
+            <input id="message" name="message" placeholder="Volitelne">
+          </div>
+
+          <button class="primary" type="submit" id="submitPayment">Odeslat platbu</button>
+        </form>
+      </section>
+
+      <section class="screen" id="screen-success" data-page-id="payment-success">
+        <h1>Platba odeslana</h1>
+        <p>Platba byla uspesne zpracovana.</p>
+
+        <div class="summary" aria-live="polite">
+          <div class="row"><span>Prijemce</span><strong id="sumRecipient">-</strong></div>
+          <div class="row"><span>Cislo uctu</span><strong id="sumIban">-</strong></div>
+          <div class="row"><span>Castka</span><strong id="sumAmount">-</strong></div>
+        </div>
+
+        <p class="ok">Stiskni systemove zpet pro navrat do formulare.</p>
+        <button class="primary" type="button" id="newPaymentBtn">Nova platba</button>
+      </section>
+    </section>
+
+    <aside class="desktop-panel" data-page-id="desktop-helper-panel">
+      <h2>Desktop ovladaci panel</h2>
+      <ul>
+        <li>Mobilni prototyp zustava cisty a bez rusivych prvku.</li>
+        <li>Tento panel se zobrazuje jen na sirsich displejich.</li>
+        <li>Lze sem dopsat poznamky pro testovani scenaru.</li>
+      </ul>
+    </aside>
+  </main>
+
+  <script>
+    var screens = {
+      form: document.getElementById("screen-form"),
+      success: document.getElementById("screen-success")
+    };
+
+    function trackPage(pageKey) {
+      var pageId = screens[pageKey].getAttribute("data-page-id");
+      document.body.setAttribute("data-current-page", pageId);
+
+      if (typeof window.clarity === "function") {
+        window.clarity("set", "virtual_page", pageId);
+      }
+
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "page_view", {
+          page_title: pageId,
+          page_path: "/prototype/" + pageId
+        });
+      }
+    }
+
+    function renderPage(pageKey) {
+      Object.keys(screens).forEach(function(key) {
+        screens[key].classList.toggle("active", key === pageKey);
+      });
+      trackPage(pageKey);
+    }
+
+    function goTo(pageKey, pushToHistory) {
+      renderPage(pageKey);
+      if (pushToHistory) {
+        history.pushState({ page: pageKey }, "", "#" + pageKey);
+      }
+    }
+
+    function fillSummary(formData) {
+      document.getElementById("sumRecipient").textContent = formData.recipient || "-";
+      document.getElementById("sumIban").textContent = formData.iban || "-";
+      document.getElementById("sumAmount").textContent = (formData.amount || "0") + " " + (formData.currency || "CZK");
+    }
+
+    document.getElementById("paymentForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      var formData = {
+        iban: document.getElementById("iban").value.trim(),
+        recipient: document.getElementById("recipient").value.trim(),
+        amount: document.getElementById("amount").value.trim(),
+        currency: document.getElementById("currency").value,
+        message: document.getElementById("message").value.trim()
+      };
+
+      if (!formData.iban || !formData.recipient || !formData.amount) {
+        alert("Vypln povinna pole.");
+        return;
+      }
+
+      fillSummary(formData);
+
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "payment_submit", {
+          event_category: "prototype",
+          value: Number(formData.amount.replace(",", ".")) || 0,
+          currency: formData.currency
+        });
+      }
+
+      goTo("success", true);
+    });
+
+    document.getElementById("newPaymentBtn").addEventListener("click", function() {
+      goTo("form", true);
+    });
+
+    document.getElementById("backBtn").addEventListener("click", function() {
+      if (history.length > 1) {
+        history.back();
+      } else {
+        goTo("form", false);
+      }
+    });
+
+    window.addEventListener("popstate", function(event) {
+      var target = (event.state && event.state.page) || (location.hash || "#form").replace("#", "");
+      if (target !== "success") {
+        target = "form";
+      }
+      renderPage(target);
+    });
+
+    var initialPage = (location.hash || "#form").replace("#", "");
+    if (initialPage !== "success") {
+      initialPage = "form";
+    }
+
+    history.replaceState({ page: initialPage }, "", "#" + initialPage);
+    renderPage(initialPage);
+  </script>
+</body>
+</html>
